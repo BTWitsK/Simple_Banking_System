@@ -3,7 +3,15 @@ import java.util.*;
 
 public class Account {
     enum subMenu {
+        BALANCE(1),
+        LOGOUT(2),
+        EXIT(0);
 
+        int input;
+
+        subMenu(int input) {
+            this.input = input;
+        }
     }
     Random random = new Random(29);
     private StringBuilder accountNumber;
@@ -38,6 +46,24 @@ public class Account {
         Account other = (Account) b;
 
         return getAccountNumber().equals(other.getAccountNumber()) && getAccountPIN().equals(other.getAccountPIN());
+    }
+
+    public subMenu setSubMenu(int input) {
+        for (subMenu entry: subMenu.values()) {
+            if (entry.input == input) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public void printSubMenu() {
+        System.out.print("""
+                1. Balance
+                2. Log out
+                0. Exit
+                
+                """);
     }
 
     public String getAccountPIN() {
