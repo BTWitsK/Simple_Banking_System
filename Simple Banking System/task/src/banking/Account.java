@@ -17,10 +17,13 @@ public class Account {
     private StringBuilder accountNumber;
     private final String accountPIN;
     private boolean loggedIn = false;
+    private int balance;
+    subMenu menu;
 
     Account() {
         this.accountPIN = String.valueOf(random.ints(4));
         this.accountNumber = this.accountNumber.append("400000").append(random.ints(9));
+        this.balance = 0;
         System.out.printf("""
                 Your card has been created
                 Your card number:
@@ -34,6 +37,7 @@ public class Account {
     Account(String account, String pin) {
         this.accountNumber.append(account);
         this.accountPIN = pin;
+        this.balance = 0;
 
     }
 
@@ -48,13 +52,12 @@ public class Account {
         return getAccountNumber().equals(other.getAccountNumber()) && getAccountPIN().equals(other.getAccountPIN());
     }
 
-    public subMenu setSubMenu(int input) {
+    public void setSubMenu(int input) {
         for (subMenu entry: subMenu.values()) {
             if (entry.input == input) {
-                return entry;
+                this.menu = entry;
             }
         }
-        return null;
     }
 
     public void printSubMenu() {
@@ -74,15 +77,21 @@ public class Account {
         return this.accountNumber.toString();
     }
 
+    public int getBalance() {
+        return this.balance;
+    }
+
     public boolean isLoggedIn() {
         return loggedIn;
     }
 
     public void logIn() {
         this.loggedIn = true;
+        System.out.println("You have successfully logged in!");
     }
 
     public void logOut() {
         this.loggedIn = false;
+        System.out.println("You have successfully logged out!");
     }
 }
