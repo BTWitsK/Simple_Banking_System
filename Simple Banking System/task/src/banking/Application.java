@@ -1,6 +1,96 @@
 package banking;
 import java.util.*;
 
+class Account {
+    enum subMenu {
+        BALANCE(1),
+        LOGOUT(2),
+        EXIT(0);
+
+        int input;
+
+        subMenu(int input) {
+            this.input = input;
+        }
+    }
+    Random random;
+    private StringBuilder accountNumber = new StringBuilder();
+    private final String accountPIN;
+    private boolean loggedIn = false;
+    private int balance;
+    subMenu menu;
+
+    Account() {
+        random = new Random();
+        this.accountPIN = String.valueOf(random.nextInt(1000, 10000));
+        this.accountNumber = this.accountNumber.append("400000")
+                .append(random.nextInt(10000, 100000))
+                .append(random.nextInt(10000, 100000));
+        this.balance = 0;
+    }
+
+    Account(String account, String pin) {
+        random = new Random();
+        this.accountNumber.append(account);
+        this.accountPIN = pin;
+        this.balance = 0;
+
+    }
+
+    @Override
+    public boolean equals(Object b) {
+        if (this.getClass() != b.getClass()) {
+            return false;
+        }
+
+        Account other = (Account) b;
+
+        return getAccountNumber().equals(other.getAccountNumber()) && getAccountPIN().equals(other.getAccountPIN());
+    }
+
+    public void setSubMenu(int input) {
+        for (subMenu entry: subMenu.values()) {
+            if (entry.input == input) {
+                this.menu = entry;
+            }
+        }
+    }
+
+    public void printSubMenu() {
+        System.out.print("""
+                1. Balance
+                2. Log out
+                0. Exit
+                """);
+    }
+
+    public String getAccountPIN() {
+        return this.accountPIN;
+    }
+
+    public String getAccountNumber() {
+        return this.accountNumber.toString();
+    }
+
+    public int getBalance() {
+        return this.balance;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void logIn() {
+        this.loggedIn = true;
+        System.out.println("\nYou have successfully logged in!");
+    }
+
+    public void logOut() {
+        this.loggedIn = false;
+        System.out.println("\nYou have successfully logged out!");
+    }
+}
+
 class Application {
     enum MainMenu {
         CREATE(1),
@@ -25,7 +115,7 @@ class Application {
     }
 
     public MainMenu setState() {
-        int input = scanner.nextInt();
+        int input = Integer.parseInt(scanner.nextLine());
         for (MainMenu currentState : MainMenu.values()) {
             if (currentState.state == input) {
                 return currentState;
@@ -44,11 +134,14 @@ class Application {
     }
 
     public void createAccount() {
-        accounts.add(new Account());
+        Account newAccount = new Account();
+        System.out.printf("\nYour card has been created\nYour card number:\n%d\nYour card PIN:\n%s\n",
+                Long.parseLong(newAccount.getAccountNumber()), newAccount.getAccountPIN());
+        accounts.add(newAccount);
     }
 
     public void logInAccount() {
-        System.out.println("Enter your card number:");
+        System.out.println("\nEnter your card number:");
         String number = scanner.nextLine();
         System.out.println("Enter your PIN:");
         String pin = scanner.nextLine();
@@ -61,7 +154,7 @@ class Application {
 
             do {
                 userAccount.printSubMenu();
-                userAccount.setSubMenu(scanner.nextInt());
+                userAccount.setSubMenu(Integer.parseInt(scanner.nextLine()));
 
                 switch (userAccount.menu) {
                     case BALANCE -> System.out.println(userAccount.getBalance());
@@ -71,7 +164,7 @@ class Application {
                         System.out.println("Bye!");
                     }
                 }
-            } while (userAccount.isLoggedIn() || mainMenu != MainMenu.EXIT);
+            } while (userAccount.isLoggedIn() && mainMenu != MainMenu.EXIT);
         }
     }
 }
