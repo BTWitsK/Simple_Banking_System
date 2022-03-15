@@ -19,6 +19,8 @@ class Account {
     private boolean loggedIn = false;
     private int balance;
     subMenu menu;
+    static int privateKey = 0;
+    private final int key;
 
     Account() {
         random = new Random();
@@ -28,6 +30,7 @@ class Account {
                 .append(random.nextInt(1000, 10000))
                 .append(addCheckSum(accountNumber));
         this.balance = 0;
+        this.key = privateKey++;
     }
 
     Account(String account, String pin) {
@@ -35,6 +38,7 @@ class Account {
         this.accountNumber.append(account);
         this.accountPIN = pin;
         this.balance = 0;
+        this.key = privateKey++;
 
     }
 
@@ -92,6 +96,10 @@ class Account {
 
     public int getBalance() {
         return this.balance;
+    }
+
+    public int getKey() {
+        return this.key;
     }
 
     public boolean isLoggedIn() {

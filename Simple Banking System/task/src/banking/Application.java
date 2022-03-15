@@ -15,11 +15,11 @@ class Application {
     }
     static Scanner scanner;
     MainMenu mainMenu;
-    ArrayList<Account> accounts;
+    Database db;
 
-    public Application() {
+    public Application(String fileName) {
         scanner = new Scanner(System.in);
-        accounts = new ArrayList<>();
+        db = new Database(fileName);
         printMenu();
         mainMenu = setState();
     }
@@ -47,8 +47,7 @@ class Application {
         Account newAccount = new Account();
         System.out.printf("\nYour card has been created\nYour card number:\n%d\nYour card PIN:\n%s\n",
                 Long.parseLong(newAccount.getAccountNumber()), newAccount.getAccountPIN());
-        accounts.add(newAccount);
-
+        db.insert(newAccount);
     }
 
     public void logInAccount() {
@@ -58,7 +57,7 @@ class Application {
         String pin = scanner.nextLine();
         Account userAccount = new Account(number, pin);
 
-        if (!accounts.contains(userAccount)) {
+        if (!db.isInDataBase(userAccount)) {
             System.out.println("Wrong card number or PIN!");
         } else {
             userAccount.logIn();

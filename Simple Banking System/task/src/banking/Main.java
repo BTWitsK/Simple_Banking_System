@@ -2,7 +2,7 @@ package banking;
 
 public class Main {
     public static void main(String[] args) {
-        Application app = new Application();
+        Application app = new Application(args[1]);
 
         do {
             switch(app.mainMenu) {
@@ -10,9 +10,10 @@ public class Main {
                 case LOGIN -> app.logInAccount();
                 case EXIT -> System.out.println("Bye!");
             }
-
-            app.printMenu();
-            app.mainMenu = app.setState();
+            if (app.mainMenu != Application.MainMenu.EXIT) {
+                app.printMenu();
+                app.mainMenu = app.setState();
+            }
 
         } while (app.mainMenu != Application.MainMenu.EXIT);
     }
