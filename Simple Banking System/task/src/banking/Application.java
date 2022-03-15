@@ -48,6 +48,7 @@ class Application {
         System.out.printf("\nYour card has been created\nYour card number:\n%d\nYour card PIN:\n%s\n",
                 Long.parseLong(newAccount.getAccountNumber()), newAccount.getAccountPIN());
         accounts.add(newAccount);
+
     }
 
     public void logInAccount() {
