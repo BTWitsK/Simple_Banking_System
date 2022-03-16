@@ -42,7 +42,6 @@ class Account {
         this.accountPIN = pin;
         this.balance = 0;
         this.key = privateKey++;
-
     }
 
     @Override
@@ -96,17 +95,6 @@ class Account {
     public void addIncome(int income) {
         this.balance += income;
         System.out.println("Income was added!");
-    }
-
-    //TODO: implement transfer
-    public void transferMoney(String accountNumber) {
-        //TODO: if user tries to transfer more money, "Not enough money!"
-        //TODO: if transfer successful, "Success!"
-    }
-
-    //TODO: implement close account (delete account from database)
-    public void deleteAccount() {
-        //TODO: if successful "\n The account has been closed!"
     }
 
     public String getAccountPIN() {

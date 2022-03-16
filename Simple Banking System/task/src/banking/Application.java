@@ -71,10 +71,6 @@ class Application {
         return Account.luhnSum(accountNumberAsList) % 10 == 0;
     }
 
-    public void transferFunds(String toAccount, int ammount) {
-
-    }
-
     public void logInAccount() {
         System.out.println("\nEnter your card number:");
         String number = scanner.nextLine();
@@ -106,10 +102,13 @@ class Application {
                     String toAccount = scanner.nextLine();
                     if (accountIsVerifiedForTransfer(userAccount.getAccountNumber(), toAccount)) {
                         System.out.println("Enter how much money you want to transfer:");
-                        transferFunds(toAccount, Integer.parseInt(scanner.nextLine()));
+                        db.transfer(userAccount, toAccount, Integer.parseInt(scanner.nextLine()));
                     }
                 }
-                case CLOSE -> userAccount.deleteAccount();
+                case CLOSE -> {
+                    db.deleteAccount(userAccount);
+                    userAccount.logOut();
+                }
                 case LOGOUT -> userAccount.logOut();
                 case EXIT -> {
                     this.mainMenu = MainMenu.EXIT;

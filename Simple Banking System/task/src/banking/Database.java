@@ -1,9 +1,6 @@
 package banking;
-
 import org.sqlite.SQLiteDataSource;
-
 import java.sql.*;
-//TODO: refactor staements to preparedstatements
 
 public class Database {
     String path = "jdbc:sqlite:";
@@ -35,21 +32,65 @@ public class Database {
         }
     }
 
-    public void insert(Account newAccount) {
+    public void deleteAccount(Account userAccount) {
         String sql = """
-                INSERT INTO card
-                    VALUES(%d, %s, %s, %d)
-                """.formatted(newAccount.getKey(), newAccount.getAccountNumber(),
-                newAccount.getAccountPIN(), newAccount.getBalance());
-
+                    DELETE FROM card
+                        WHERE number = ?
+                """;
         try {
             connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, userAccount.getAccountNumber());
+            statement.executeUpdate();
+            System.out.println("\nThe account has been closed!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void transfer(Account fromAccount, String toAccount, int amount) {
+        if (fromAccount.getBalance() < amount) {
+            System.out.println("Not enough money!");
+        } else {
+            String sql = """
+                        UPDATE card
+                            SET balance = ?
+                            WHERE number = ?
+                    """;
             try {
-                statement = connection.createStatement();
-                statement.executeUpdate(sql);
+                connection = dataSource.getConnection();
+                connection.setAutoCommit(false);
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setInt(1, fromAccount.getBalance() - amount);
+                statement.setString(2, fromAccount.getAccountNumber());
+                statement.executeUpdate();
+
+                statement.setInt(1, getBalance(toAccount) + amount);
+                statement.setString(2, toAccount);
+                statement.executeUpdate();
+
+                connection.commit();
+                System.out.println("Success!\n");
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
             }
+        }
+    }
+
+    public void insert(Account newAccount) {
+        String sql = """
+                INSERT INTO card
+                    VALUES(?, ?, ?, ?)
+                """;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, newAccount.getKey());
+            statement.setString(2, newAccount.getAccountNumber());
+            statement.setString(3, newAccount.getAccountPIN());
+            statement.setInt(4, newAccount.getBalance());
+            statement.executeUpdate();
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -86,5 +127,22 @@ public class Database {
             System.out.println(e.getMessage());
         }
         return false;
+    }
+
+    public int getBalance(String accountNumber) {
+        String sql = """
+                    SELECT balance FROM card WHERE number = ?
+                """;
+        try {
+            connection = dataSource.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, accountNumber);
+
+            return statement.executeQuery().getInt("balance");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return -1;
     }
 }
