@@ -50,6 +50,42 @@ class Application {
         db.insert(newAccount);
     }
 
+    public boolean accountIsVerifiedForTransfer(String fromAccount, String toAccount) {
+        if (fromAccount.equals(toAccount)) {
+            System.out.println("You can't transfer money to the same account!");
+            return false;
+        }
+        //TODO: if toAccount doesn't pass the luhn algorithm, "Probably you made a mistake in the card number.
+        //TODO:                                                Please try again!"
+        if (!db.isInDataBase(toAccount)) {
+            System.out.println("Such a card does not exist.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean passesLuhnAlgorithm(String accountNumber) {
+        ArrayList<String> accountNumberAsList = new ArrayList<>(Arrays.asList(accountNumber.split("")));
+        ArrayList<Integer> numberListAsInts = new ArrayList<>();
+
+        accountNumberAsList.forEach(num -> numberListAsInts.add(Integer.parseInt(num)));
+        int sum = 0;
+
+        for (int i = 0; i < numberListAsInts.size(); i ++) {
+            if (i % 2 == 0) {
+                numberListAsInts.set(i, numberListAsInts.get(i) * 2 > 9 ?
+                        numberListAsInts.get(i) * 2 - 9 : numberListAsInts.get(i) * 2 );
+            }
+            sum += numberListAsInts.get(i);
+        }
+
+
+    }
+
+    public void transferFunds(String toAccount, int ammount) {
+
+    }
+
     public void logInAccount() {
         System.out.println("\nEnter your card number:");
         String number = scanner.nextLine();
@@ -61,20 +97,36 @@ class Application {
             System.out.println("Wrong card number or PIN!");
         } else {
             userAccount.logIn();
+            accountMenu(userAccount);
+        }
+    }
 
-            do {
-                userAccount.printSubMenu();
-                userAccount.setSubMenu(Integer.parseInt(scanner.nextLine()));
+    public void accountMenu(Account userAccount) {
+        do {
+            userAccount.printSubMenu();
+            userAccount.setSubMenu(Integer.parseInt(scanner.nextLine()));
 
-                switch (userAccount.menu) {
-                    case BALANCE -> System.out.println(userAccount.getBalance());
-                    case LOGOUT -> userAccount.logOut();
-                    case EXIT -> {
-                        this.mainMenu = MainMenu.EXIT;
-                        System.out.println("Bye!");
+            switch (userAccount.menu) {
+                case BALANCE -> System.out.printf("Balance: %d\n", userAccount.getBalance());
+                case INCOME -> {
+                    System.out.println("Enter income:");
+                    userAccount.addIncome(Integer.parseInt(scanner.nextLine()));
+                }
+                case TRANSFER -> {
+                    System.out.println("Transfer\nEnter card number:");
+                    String toAccount = scanner.nextLine();
+                    if (accountIsVerifiedForTransfer(userAccount.getAccountNumber(), toAccount)) {
+                        System.out.println("Enter how much money you want to transfer:");
+                        transferFunds(toAccount, Integer.parseInt(scanner.nextLine()));
                     }
                 }
-            } while (userAccount.isLoggedIn() && mainMenu != MainMenu.EXIT);
-        }
+                case CLOSE -> userAccount.deleteAccount();
+                case LOGOUT -> userAccount.logOut();
+                case EXIT -> {
+                    this.mainMenu = MainMenu.EXIT;
+                    System.out.println("Bye!");
+                }
+            }
+        } while (userAccount.isLoggedIn() && mainMenu != MainMenu.EXIT);
     }
 }

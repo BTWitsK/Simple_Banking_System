@@ -4,7 +4,10 @@ import java.util.*;
 class Account {
     enum subMenu {
         BALANCE(1),
-        LOGOUT(2),
+        INCOME(2),
+        TRANSFER(3),
+        CLOSE(4),
+        LOGOUT(5),
         EXIT(0);
 
         int input;
@@ -81,9 +84,28 @@ class Account {
     public void printSubMenu() {
         System.out.print("""
                 1. Balance
-                2. Log out
+                2. Add income
+                3. Do transfer
+                4. Close account
+                5. Log out
                 0. Exit
                 """);
+    }
+
+    public void addIncome(int income) {
+        this.balance += income;
+        System.out.println("Income was added!");
+    }
+
+    //TODO: implement transfer
+    public void transferMoney(String accountNumber) {
+        //TODO: if user tries to transfer more money, "Not enough money!"
+        //TODO: if transfer successful, "Success!"
+    }
+
+    //TODO: implement close account (delete account from database)
+    public void deleteAccount() {
+        //TODO: if successful "\n The account has been closed!"
     }
 
     public String getAccountPIN() {

@@ -3,6 +3,7 @@ package banking;
 import org.sqlite.SQLiteDataSource;
 
 import java.sql.*;
+//TODO: refactor staements to preparedstatements
 
 public class Database {
     String path = "jdbc:sqlite:";
@@ -59,12 +60,24 @@ public class Database {
                 SELECT * FROM card
                 WHERE number = %s AND pin = %s
                 """.formatted(userAccount.getAccountNumber(), userAccount.getAccountPIN());
+        return accountFound(sql);
+    }
 
+    public boolean isInDataBase(String accountNumber) {
+        String sql = """
+                SELECT * FROM card
+                WHERE number = %s
+                """.formatted(accountNumber);
+        return accountFound(sql);
+
+    }
+
+    public boolean accountFound(String sqlQuery) {
         try {
             connection = dataSource.getConnection();
             try {
                 statement = connection.createStatement();
-                ResultSet result = statement.executeQuery(sql);
+                ResultSet result = statement.executeQuery(sqlQuery);
                 return result.isBeforeFirst();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
