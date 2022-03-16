@@ -9,9 +9,7 @@ class Account {
         CLOSE(4),
         LOGOUT(5),
         EXIT(0);
-
-        int input;
-
+        final int input;
         subMenu(int input) {
             this.input = input;
         }
@@ -44,15 +42,6 @@ class Account {
         this.key = privateKey++;
     }
 
-    @Override
-    public boolean equals(Object b) {
-        if (this.getClass() != b.getClass()) {
-            return false;
-        }
-        Account other = (Account) b;
-        return getAccountNumber().equals(other.getAccountNumber()) && getAccountPIN().equals(other.getAccountPIN());
-    }
-
     public static int luhnSum(ArrayList<String> accountNumber) {
         ArrayList<Integer> intList = new ArrayList<>();
         accountNumber.forEach(num -> intList.add(Integer.parseInt(num)));
@@ -83,6 +72,7 @@ class Account {
 
     public void printSubMenu() {
         System.out.print("""
+                
                 1. Balance
                 2. Add income
                 3. Do transfer
@@ -90,11 +80,6 @@ class Account {
                 5. Log out
                 0. Exit
                 """);
-    }
-
-    public void addIncome(int income) {
-        this.balance += income;
-        System.out.println("Income was added!");
     }
 
     public String getAccountPIN() {

@@ -6,9 +6,7 @@ class Application {
         CREATE(1),
         LOGIN(2),
         EXIT(0);
-
-        int state;
-
+        final int state;
         MainMenu(int input) {
             this.state = input;
         }
@@ -56,11 +54,11 @@ class Application {
             return false;
         }
         if (!passesLuhnAlgorithm(toAccount)) {
-            System.out.println("Probably you made a mistake in the card number. Please try again!");
+            System.out.println("Probably you made a mistake in the card number. Please try again!\n");
             return false;
         }
         if (!db.isInDataBase(toAccount)) {
-            System.out.println("Such a card does not exist.");
+            System.out.println("Such a card does not exist.\n");
             return false;
         }
         return true;
@@ -95,10 +93,10 @@ class Application {
                 case BALANCE -> System.out.printf("Balance: %d\n", userAccount.getBalance());
                 case INCOME -> {
                     System.out.println("Enter income:");
-                    userAccount.addIncome(Integer.parseInt(scanner.nextLine()));
+                    db.addBalance(userAccount, Integer.parseInt(scanner.nextLine()));
                 }
                 case TRANSFER -> {
-                    System.out.println("Transfer\nEnter card number:");
+                    System.out.println("\nTransfer\nEnter card number:");
                     String toAccount = scanner.nextLine();
                     if (accountIsVerifiedForTransfer(userAccount.getAccountNumber(), toAccount)) {
                         System.out.println("Enter how much money you want to transfer:");
