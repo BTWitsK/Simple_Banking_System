@@ -55,8 +55,10 @@ class Application {
             System.out.println("You can't transfer money to the same account!");
             return false;
         }
-        //TODO: if toAccount doesn't pass the luhn algorithm, "Probably you made a mistake in the card number.
-        //TODO:                                                Please try again!"
+        if (!passesLuhnAlgorithm(toAccount)) {
+            System.out.println("Probably you made a mistake in the card number. Please try again!");
+            return false;
+        }
         if (!db.isInDataBase(toAccount)) {
             System.out.println("Such a card does not exist.");
             return false;
@@ -66,20 +68,7 @@ class Application {
 
     public boolean passesLuhnAlgorithm(String accountNumber) {
         ArrayList<String> accountNumberAsList = new ArrayList<>(Arrays.asList(accountNumber.split("")));
-        ArrayList<Integer> numberListAsInts = new ArrayList<>();
-
-        accountNumberAsList.forEach(num -> numberListAsInts.add(Integer.parseInt(num)));
-        int sum = 0;
-
-        for (int i = 0; i < numberListAsInts.size(); i ++) {
-            if (i % 2 == 0) {
-                numberListAsInts.set(i, numberListAsInts.get(i) * 2 > 9 ?
-                        numberListAsInts.get(i) * 2 - 9 : numberListAsInts.get(i) * 2 );
-            }
-            sum += numberListAsInts.get(i);
-        }
-
-
+        return Account.luhnSum(accountNumberAsList) % 10 == 0;
     }
 
     public void transferFunds(String toAccount, int ammount) {

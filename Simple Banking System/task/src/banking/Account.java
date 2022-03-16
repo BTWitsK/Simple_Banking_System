@@ -50,17 +50,13 @@ class Account {
         if (this.getClass() != b.getClass()) {
             return false;
         }
-
         Account other = (Account) b;
-
         return getAccountNumber().equals(other.getAccountNumber()) && getAccountPIN().equals(other.getAccountPIN());
     }
 
-    public int addCheckSum(StringBuilder accountNumber) {
-        ArrayList<String> accountList = new ArrayList<>(Arrays.asList(accountNumber.toString().split("")));
+    public static int luhnSum(ArrayList<String> accountNumber) {
         ArrayList<Integer> intList = new ArrayList<>();
-
-        accountList.forEach(num -> intList.add(Integer.parseInt(num)));
+        accountNumber.forEach(num -> intList.add(Integer.parseInt(num)));
         int sum = 0;
 
         for (int i = 0; i < intList.size(); i ++) {
@@ -69,7 +65,12 @@ class Account {
             }
             sum += intList.get(i);
         }
+        return sum;
+    }
 
+    public int addCheckSum(StringBuilder accountNumber) {
+        ArrayList<String> accountList = new ArrayList<>(Arrays.asList(accountNumber.toString().split("")));
+        int sum = luhnSum(accountList);
         return 10 - sum % 10 == 10 ? 0 : 10 - sum % 10;
     }
 
